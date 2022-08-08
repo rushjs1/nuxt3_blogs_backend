@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
 use App\Models\Post;
@@ -16,7 +17,7 @@ class PostController extends Controller
      */
     public function index()
     {
-        return Post::latest()->get();
+        return Post::with('user:id,name')->latest()->get();
     }
 
     /**
@@ -37,6 +38,8 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
+       // return response()->json(new JsonResponse([], 'This is a server error'), Response::HTTP_INTERNAL_SERVER_ERROR);
+            
         $request->validate([
             'title' => 'required|min:3',
             'body' => 'required|min:3'
@@ -57,7 +60,7 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        return $post;
+        return $post->load('user:id,name');
     }
 
     /**
